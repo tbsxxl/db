@@ -1,0 +1,451 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--db-orange:#E8570A;--db-dark:#1A1410;--db-mid:#3D2E1E}
+.wrap{padding:0 0 2rem;font-family:'DM Sans',sans-serif}
+.hero{background:var(--db-dark);color:#fff;padding:1.5rem 1.5rem 1rem;border-radius:var(--border-radius-lg);margin-bottom:1.5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-30px;right:-30px;width:180px;height:180px;border-radius:50%;border:40px solid rgba(232,87,10,0.18)}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:1px;line-height:1;color:#fff}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:0.5px;text-transform:uppercase}
+.hero-accent{color:var(--db-orange)}
+.stats-row{display:flex;gap:12px;margin-bottom:1.5rem}
+.stat{flex:1;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.75rem 1rem;text-align:center}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--db-orange)}
+.stat-l{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px}
+.tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tab{padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);font-size:13px;cursor:pointer;background:transparent;color:var(--color-text-secondary);font-family:'DM Sans',sans-serif;transition:all 0.15s}
+.tab.active{background:var(--db-orange);color:#fff;border-color:var(--db-orange)}
+.tab:hover:not(.active){background:var(--color-background-secondary)}
+.day-section{margin-bottom:1.5rem}
+.day-header{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+.day-badge{font-family:'Bebas Neue',sans-serif;font-size:15px;padding:4px 12px;border-radius:20px;color:#fff}
+.d0{background:#4A3728}.d1{background:#6B4226}.d2{background:#8B5E3C}.d3{background:var(--db-orange)}
+.day-label{font-size:13px;color:var(--color-text-secondary)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;cursor:pointer;transition:all 0.15s;position:relative}
+.card:hover{border-color:var(--db-orange);transform:translateY(-1px)}
+.card.selected{border:2px solid var(--db-orange);background:rgba(232,87,10,0.04)}
+.card.selected .check{opacity:1}
+.card-img{width:100%;aspect-ratio:1/1.1;object-fit:cover;object-position:top;display:block;background:var(--db-dark)}
+.card-body{padding:6px 8px 8px}
+.card-name{font-size:11px;font-weight:500;line-height:1.2;color:var(--color-text-primary)}
+.card-tag{font-size:10px;margin-top:2px}
+.card-tag.concert{color:#378ADD}
+.card-tag.electronic{color:var(--db-orange)}
+.check{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--db-orange);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s}
+.check svg{width:11px;height:11px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.divider{display:flex;align-items:center;gap:10px;margin:1.25rem 0 0.75rem}
+.divider-line{flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.divider-label{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--color-text-secondary)}
+.export-btn{width:100%;padding:14px;background:var(--db-dark);color:#fff;border:none;border-radius:var(--border-radius-md);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;cursor:pointer;margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s}
+.export-btn:hover{background:var(--db-mid)}
+.count-badge{background:var(--db-orange);color:#fff;font-size:14px;padding:2px 10px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:500}
+.clear-btn{display:block;margin:0.5rem auto 0;background:transparent;border:none;font-size:12px;color:var(--color-text-secondary);cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline}
+</style>
+
+<h2 class="sr-only">Deichbrand 2026 – Abstimmung für deine Lieblingsacts</h2>
+<div class="wrap">
+<div class="hero">
+  <div class="hero-title">DEICHBRAND <span class="hero-accent">2026</span></div>
+  <div class="hero-sub">16. – 19. Juli · Cuxhaven/Nordholz · Wähle deine Acts</div>
+</div>
+<div class="stats-row">
+  <div class="stat"><div class="stat-n" id="sel-count">0</div><div class="stat-l">Ausgewählt</div></div>
+  <div class="stat"><div class="stat-n">4</div><div class="stat-l">Festival-Tage</div></div>
+  <div class="stat"><div class="stat-n" id="total-count">0</div><div class="stat-l">Alle Acts</div></div>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="filterDay('all',this)">Alle Tage</button>
+  <button class="tab" onclick="filterDay('Do',this)">Do 16.7.</button>
+  <button class="tab" onclick="filterDay('Fr',this)">Fr 17.7.</button>
+  <button class="tab" onclick="filterDay('Sa',this)">Sa 18.7.</button>
+  <button class="tab" onclick="filterDay('So',this)">So 19.7.</button>
+</div>
+<div id="root"></div>
+<button class="export-btn" onclick="doExport()">
+  <i class="ti ti-download" aria-hidden="true"></i>
+  Meine Auswahl exportieren
+  <span class="count-badge" id="exp-badge">0</span>
+</button>
+<button class="clear-btn" onclick="clearAll()">Auswahl zurücksetzen</button>
+</div>
+<canvas id="cv" style="display:none"></canvas>
+
+<script>
+const B='https://deichbrand.de';
+const IMGS={
+'rise-against':B+'/fileadmin/_processed_/8/f/csm_Rise_Against_6d7ae8819a.jpg',
+'sdp':B+'/fileadmin/_processed_/0/5/csm_SDP_pressebild_web_byRobertHirschmann_bdxmedia__1__30eb3554c7.png',
+'electric-callboy':B+'/fileadmin/_processed_/c/e/csm_DB26_ElectricCallboy_f934207521.jpg',
+'scooter':B+'/fileadmin/_processed_/a/4/csm_Scooter_c_2_PhilippNuernberger_SheffieldTunes_1124_7fb641e7de.png',
+'marteria':B+'/fileadmin/_processed_/5/d/csm_DB26_Marteria_Website_NEU02_cdd4079e1f.jpg',
+'sido':B+'/fileadmin/_processed_/4/6/csm_DB26_Sido_0a4b50aa54.jpg',
+'dropkick-murphys':B+'/fileadmin/_processed_/3/0/csm_Dropkick_Murphys_c10382686c.jpg',
+'zartmann':B+'/fileadmin/_processed_/9/c/csm_DB26_Zartmann_4a013db49b.jpg',
+'beatsteaks':B+'/fileadmin/_processed_/9/0/csm_DB26_Beatsteaks_Website_NEU_69671feb7b.jpg',
+'01099':B+'/fileadmin/_processed_/5/7/csm_01099_Paul_Hepper_2__1__362bb9b1f9.jpg',
+'giant-rooks':B+'/fileadmin/_processed_/7/9/csm_GiantRooks_c_Paula_Schumacher_0325_db9f811c7e.jpg',
+'ikkimel':B+'/fileadmin/_processed_/8/b/csm_Ikkimel_c_LaurentNoichl_3de2531d96.jpeg',
+'feine-sahne-fischfilet':B+'/fileadmin/_processed_/2/1/csm_Feine_Sahne_Fischfilet_98c982e7af.jpg',
+'disco-lines':B+'/fileadmin/_processed_/d/1/csm_DB26_DiscoLines_Website_NEU_6edbadb465.jpg',
+'hbz':B+'/fileadmin/_processed_/2/e/csm_DB26_HBZ_7cc6d63842.jpg',
+'mehnersmoos':B+'/fileadmin/_processed_/2/a/csm_DB26_Mehnersmoos_624a9939d1.jpg',
+'felix-jaehn':B+'/fileadmin/_processed_/4/6/csm_Felix_Jaehn_e39137560b.jpg',
+'no-angels':B+'/fileadmin/_processed_/4/f/csm_DB26_NoAngels_489d64b0cc.jpg',
+'makko':B+'/fileadmin/_processed_/6/9/csm_DB26_Makko_ac92a16eab.jpg',
+'nico-santos':B+'/fileadmin/_processed_/1/e/csm_Nico_Mallorca_TW_Presse-1_ee5a3c28f2.jpg',
+'alexander-marcus':B+'/fileadmin/_processed_/2/6/csm_Alexander_Marcus__C__LANDRY_526199fdbf.jpg',
+'querbeat':B+'/fileadmin/_processed_/f/6/csm_DB26_Querbeat_c414c78bc2.jpg',
+'disarstar':B+'/fileadmin/_processed_/a/0/csm_DB26_Disarstar_Website_NEU_683f4f4819.jpg',
+'swiss-die-andern':B+'/fileadmin/_processed_/d/8/csm_DB26_Swiss_dieAndern_e3ef3d5f2a.jpg',
+'mia-julia':B+'/fileadmin/_processed_/d/3/csm_weiss_Mia_Julia_076b27bc7d.jpg',
+'102-boyz':B+'/fileadmin/_processed_/c/2/csm_102_Boyz_9ce6a80014.jpg',
+'raum27':B+'/fileadmin/_processed_/8/5/csm_DB26_Raum27_cf1682ef6c.jpg',
+'nura':B+'/fileadmin/_processed_/6/d/csm_DB26_Nura_6980e97875.jpg',
+'257ers':B+'/fileadmin/_processed_/9/3/csm_257ers_leonxphoto_fbcfe70a4c.jpg',
+'drunken-masters':B+'/fileadmin/_processed_/2/a/csm_DB26_DrunkenMasters_88aadb6878.jpg',
+'majan':B+'/fileadmin/_processed_/9/e/csm_3_MAJAN_by_RaphaelSchumacher_7f805a7a0b.jpg',
+'cascada':B+'/fileadmin/_processed_/8/b/csm_Cascada_9b52035aac.jpg',
+'the-rasmus':B+'/fileadmin/_processed_/2/e/csm_DB26_TheRasmus_Website_NEU_be7120274d.jpg',
+'tiefbasskommando':B+'/fileadmin/_processed_/1/c/csm_TBK_c23e0a02eb.jpg',
+'jet':B+'/fileadmin/_processed_/b/6/csm_JET_Main_PressOneBand_credit_MichellePitirisSheisaphrodite_e956039401.jpg',
+'annisokay':B+'/fileadmin/_processed_/6/b/csm_Annisokay_ca40751a4c.jpg',
+'deaf-havana':B+'/fileadmin/_processed_/1/8/csm_DEAF_HAVANA_SELECTS_40_9a507e60e3.jpg',
+'welshly-arms':B+'/fileadmin/_processed_/f/d/csm_5.1.WelshlyArms2468_6077bae460.jpg',
+'jassin':B+'/fileadmin/_processed_/9/2/csm_Jassin-2-c-Linda-Carl_7054dc9e63.jpeg',
+'rogers':B+'/fileadmin/_processed_/1/4/csm_DB26_Rogers_Website_NEU_2710a98531.jpg',
+'anna-grey':B+'/fileadmin/_processed_/b/0/csm_Anna_Grey_9a9c6e932c.jpg',
+'okdanketschuess':B+'/fileadmin/_processed_/d/e/csm_okdanketschuess_Foto_Credits_CAPADOL_250121_ODT001_55b4f1776d.jpg',
+'badchieff':B+'/fileadmin/_processed_/d/b/csm_BADCHIEFF_by_FinnBeek_75fa2cb2c9.jpg',
+'tjark':B+'/fileadmin/_processed_/1/6/csm_DB26_Tjark_5bd45c3a58.jpg',
+'anais':B+'/fileadmin/_processed_/f/3/csm_DB26_Anais_Website_NEU_5f3ec1e7d9.jpg',
+'bac':B+'/fileadmin/_processed_/a/1/csm_Bac_e28348f0e5.jpg',
+'marlo-grosshardt':B+'/fileadmin/_processed_/0/7/csm_2025_Marlo_Grosshardt_Presse_Julia_Tiemann-01_d3238d709a.jpeg',
+'punkrock-factory':B+'/fileadmin/_processed_/9/5/csm_PUNK_ROCK_FACTORY_Pressebild__1__9878f4daa3.jpg',
+'our-mirage':B+'/fileadmin/_processed_/e/6/csm_DB26_OurMirage_Website_NEU_467e5aeb5a.jpg',
+'leap':B+'/fileadmin/_processed_/7/7/csm_Leap_a7c72bb46b.jpg',
+'le-fly':B+'/fileadmin/_processed_/f/8/csm_lefly_by_Janis-Hinz_print_quer_69ba3a9fcf.jpg',
+'jolle':B+'/fileadmin/_processed_/7/c/csm_jolle_06_credit_Felix_Krueger_25ad7c12af.jpg',
+'beauty-and-the-beats':B+'/fileadmin/_processed_/1/5/csm_Beauty___the_Beats_Jim_Neve_043af7fee6.jpg',
+'massendefekt':B+'/fileadmin/_processed_/8/f/csm_MD_Foto_Klein_683x1024__c._Thorsten_Schmidtkord_99b7eeac35.jpg',
+'mandelkokainschnaps':B+'/fileadmin/_processed_/4/3/csm_MandelKokainSchnaps_796f237c4b.png',
+'avralize':B+'/fileadmin/_processed_/9/5/csm_DB26_Avralize_Website_NEU_f7ecacf6e0.jpg',
+'noah-kraus':B+'/fileadmin/_processed_/5/d/csm_2_Pressefoto_NoahKraus__c__Elena_Zaucke_dd1f02879a.jpg',
+'lovehead':B+'/fileadmin/_processed_/5/b/csm_DB26_Lovehead_App_722x451_716bc889fe.jpg',
+'panicbaby':B+'/fileadmin/_processed_/a/0/csm_Panicbaby_37665ecc2a.png',
+'augn':B+'/fileadmin/_processed_/b/0/csm_DB26_Augn_Website_NEU_8e3c1e2b29.jpg',
+'luke-madness':B+'/fileadmin/_processed_/a/0/csm_DB26_LukeMadness_Website_NEU_20baa0e2e3.jpg',
+'the-molotovs':B+'/fileadmin/_processed_/e/1/csm_The_Molotovs_9fc5cedf1d.jpg',
+'bella':B+'/fileadmin/_processed_/1/6/csm_DB26_Bella_Website_NEU_b9a71dd5ec.jpg',
+'kochkraft-durch-kma':B+'/fileadmin/_processed_/1/0/csm_Kochkraft_durch_kma_0241f2e640.jpg',
+'remote-bondage':B+'/fileadmin/_processed_/0/3/csm_Remote_Bondage_95dccb495b.jpg',
+'grenzkontrolle':B+'/fileadmin/_processed_/c/7/csm_GRENZKONTROLLE_Credits_Binh_Minh_078e4c6405.jpeg',
+'attic109':B+'/fileadmin/_processed_/0/0/csm_DB26_ATTIC109_Website_NEU_4477e73545.jpg',
+'ochmoneks':B+'/fileadmin/_processed_/3/2/csm_Ochmoneks_2026_01_6b45533d94.jpg',
+'lina-bo':B+'/fileadmin/_processed_/5/2/csm_Lina_Bo_d9ef4f145c.jpg',
+'king-kong-kicks':B+'/fileadmin/_processed_/1/f/csm_King_Kong_Kicks_eaa5da968d.jpg',
+'andhim':B+'/fileadmin/_processed_/c/6/csm_DB26_Andhim_Website_NEU_3e33e184a2.jpg',
+'annett-gapstream':B+'/fileadmin/_processed_/8/5/csm_DB26_Annett_Gapstream_Website_NEU_841f4a3baf.jpg',
+'baby-b3ns':B+'/fileadmin/_processed_/3/5/csm_Baby_B3ns_c_Baby_B3ns_40f1c38e8b.jpeg',
+'cara-elizabeth':B+'/fileadmin/_processed_/e/f/csm_5_Cara_Elizabeth_a3e0b4477f.jpg',
+'christian-loeffler':B+'/fileadmin/_processed_/1/2/csm_Christian_Loeffler_Portrait_3866140042.jpeg',
+'davyboi':B+'/fileadmin/_processed_/d/a/csm_Davyboi_319277dc02.jpg',
+'dj-dreckisch':B+'/fileadmin/_processed_/1/1/csm_DB26_Dreckisch_Website_NEU_c2ce7b4476.jpg',
+'ede':B+'/fileadmin/_processed_/9/2/csm_DB26_Ede_Website_NEU_64b94547fb.jpg',
+'ellen-allien':B+'/fileadmin/_processed_/b/8/csm_Ellen_Allien_by_Tribunalova_look_8-scaled_07b347809b.jpg',
+'eskei83':B+'/fileadmin/_processed_/f/8/csm_Eskei83_-_Pascal_Blaurock_-_DSC07335-Verbessert-SR_24cdb59496.jpg',
+'godash':B+'/fileadmin/_processed_/9/7/csm_Godash-BW2_f2b77c64c3.jpg',
+'kenza-kayati':B+'/fileadmin/_processed_/2/5/csm_Kenza_Kayati_23dc2db830.jpeg',
+'kid-simius':B+'/fileadmin/_processed_/5/5/csm_Kid_Simius_8fd5310f11.jpg',
+'kollektiv-turmstrasse':B+'/fileadmin/_processed_/4/a/csm_Kollektiv_Turmstresse_1b56869cd6.jpg',
+'kristin-velvet':B+'/fileadmin/_processed_/5/e/csm_DB26_KristinVelvet_Website_NEU_1e0070f588.jpg',
+'kuestenklatsch':B+'/fileadmin/_processed_/e/4/csm_DB26_Kuestenklatsch_Website_NEU_f43c3d1df3.jpg',
+'lynno':B+'/fileadmin/_processed_/3/c/csm_Lynno_df676f081a.jpg',
+'mind-against':B+'/fileadmin/_processed_/4/3/csm_Mind_Against_708c01483f.png',
+'moonbootica':B+'/fileadmin/_processed_/0/4/csm_Moonbootica_d480d88037.jpg',
+'nina-hepburn':B+'/fileadmin/_processed_/a/0/csm_Nina_Hepburn_614a74dc7d.jpg',
+'noel-holler':B+'/fileadmin/_processed_/1/3/csm_Noel_Holler_ebb2305de4.jpg',
+'nohr':B+'/fileadmin/_processed_/f/e/csm_DB26_Nohr_Website_NEU_a97fd8cb06.jpg',
+'nomads':B+'/fileadmin/_processed_/b/4/csm_No_Mads_50eae44a68.jpg',
+'nora-en-pure':B+'/fileadmin/_processed_/d/e/csm_DB26_NoraEnPure_App_665e73fc7d.jpg',
+'paracek':B+'/fileadmin/_processed_/3/f/csm_DB26_Paracek_Website_NEU_14211e3781.jpg',
+'schlepp-geist':B+'/fileadmin/_processed_/0/d/csm_Schlepp_Geist_ccd571685e.jpg',
+'schrotthagen':B+'/fileadmin/_processed_/5/0/csm_DB26_Schrotthagen_Website_NEU_45b8f7f8b8.jpg',
+'skkin-velvet':B+'/fileadmin/_processed_/4/4/csm_SKKIN_VELVET_4_7753f3d943.jpg',
+'suze':B+'/fileadmin/_processed_/d/0/csm_DB26_Suze_Website_NEU_4c8f069001.jpg',
+'tonic-walter':B+'/fileadmin/_processed_/4/c/csm_07_Tonic_Walter_Presskit_Kilian_Seiler_accdb011dc.jpg',
+'vargo':B+'/fileadmin/_processed_/d/2/csm_Press_VARGO_Foto_Marc_Asmussen_b9c2329b94.jpg'
+};
+
+const DAY_INFO={Do:{l:'Donnerstag, 16. Juli',c:'d0'},Fr:{l:'Freitag, 17. Juli',c:'d1'},Sa:{l:'Samstag, 18. Juli',c:'d2'},So:{l:'Sonntag, 19. Juli',c:'d3'}};
+
+const ACTS=[
+  {n:'HBZ',d:'Do',k:'hbz',c:'concert'},
+  {n:'Drunken Masters',d:'Do',k:'drunken-masters',c:'concert'},
+  {n:'Tiefbasskommando',d:'Do',k:'tiefbasskommando',c:'concert'},
+  {n:'Jet',d:'Do',k:'jet',c:'concert'},
+  {n:'Deaf Havana',d:'Do',k:'deaf-havana',c:'concert'},
+  {n:'Punk Rock Factory',d:'Do',k:'punkrock-factory',c:'concert'},
+  {n:'Our Mirage',d:'Do',k:'our-mirage',c:'concert'},
+  {n:'Leap',d:'Do',k:'leap',c:'concert'},
+  {n:'Beauty and the Beats',d:'Do',k:'beauty-and-the-beats',c:'concert'},
+  {n:'Avralize',d:'Do',k:'avralize',c:'concert'},
+  {n:'Lovehead',d:'Do',k:'lovehead',c:'concert'},
+  {n:'Mind Against',d:'Do',k:'mind-against',c:'electronic'},
+  {n:'Nora En Pure',d:'Do',k:'nora-en-pure',c:'electronic'},
+  {n:'Tonic Walter',d:'Do',k:'tonic-walter',c:'electronic'},
+  {n:'Vargo',d:'Do',k:'vargo',c:'electronic'},
+  {n:'Nohr',d:'Do',k:'nohr',c:'electronic'},
+  {n:'Kenza Kayati',d:'Do',k:'kenza-kayati',c:'electronic'},
+  {n:'Godash',d:'Do',k:'godash',c:'electronic'},
+  {n:'Ede',d:'Do',k:'ede',c:'electronic'},
+  {n:'Annett Gapstream',d:'Do',k:'annett-gapstream',c:'electronic'},
+  {n:'Electric Callboy',d:'Fr',k:'electric-callboy',c:'concert'},
+  {n:'Scooter',d:'Fr',k:'scooter',c:'concert'},
+  {n:'Marteria',d:'Fr',k:'marteria',c:'concert'},
+  {n:'Beatsteaks',d:'Fr',k:'beatsteaks',c:'concert'},
+  {n:'Feine Sahne Fischfilet',d:'Fr',k:'feine-sahne-fischfilet',c:'concert'},
+  {n:'No Angels',d:'Fr',k:'no-angels',c:'concert'},
+  {n:'Querbeat',d:'Fr',k:'querbeat',c:'concert'},
+  {n:'Disarstar',d:'Fr',k:'disarstar',c:'concert'},
+  {n:'Mehnersmoos',d:'Fr',k:'mehnersmoos',c:'concert'},
+  {n:'Rogers',d:'Fr',k:'rogers',c:'concert'},
+  {n:'Badchieff',d:'Fr',k:'badchieff',c:'concert'},
+  {n:'Tjark',d:'Fr',k:'tjark',c:'concert'},
+  {n:'Marlo Grosshardt',d:'Fr',k:'marlo-grosshardt',c:'concert'},
+  {n:'Panicbaby',d:'Fr',k:'panicbaby',c:'concert'},
+  {n:'Augn',d:'Fr',k:'augn',c:'concert'},
+  {n:'Luke Madness',d:'Fr',k:'luke-madness',c:'concert'},
+  {n:'Attic109',d:'Fr',k:'attic109',c:'concert'},
+  {n:'Ochmoneks',d:'Fr',k:'ochmoneks',c:'concert'},
+  {n:'Le Fly',d:'Fr',k:'le-fly',c:'concert'},
+  {n:'Jolle',d:'Fr',k:'jolle',c:'concert'},
+  {n:'Cara Elizabeth',d:'Fr',k:'cara-elizabeth',c:'electronic'},
+  {n:'Andhim',d:'Fr',k:'andhim',c:'electronic'},
+  {n:'Kid Simius',d:'Fr',k:'kid-simius',c:'electronic'},
+  {n:'DJ Dreckisch',d:'Fr',k:'dj-dreckisch',c:'electronic'},
+  {n:'Davyboi',d:'Fr',k:'davyboi',c:'electronic'},
+  {n:'Nina Hepburn',d:'Fr',k:'nina-hepburn',c:'electronic'},
+  {n:'Paraçek',d:'Fr',k:'paracek',c:'electronic'},
+  {n:'Küstenklatsch',d:'Fr',k:'kuestenklatsch',c:'electronic'},
+  {n:'Rise Against',d:'Sa',k:'rise-against',c:'concert'},
+  {n:'SDP',d:'Sa',k:'sdp',c:'concert'},
+  {n:'Dropkick Murphys',d:'Sa',k:'dropkick-murphys',c:'concert'},
+  {n:'Zartmann',d:'Sa',k:'zartmann',c:'concert'},
+  {n:'Disco Lines',d:'Sa',k:'disco-lines',c:'concert'},
+  {n:'Felix Jaehn',d:'Sa',k:'felix-jaehn',c:'concert'},
+  {n:'Nico Santos',d:'Sa',k:'nico-santos',c:'concert'},
+  {n:'Alexander Marcus',d:'Sa',k:'alexander-marcus',c:'concert'},
+  {n:'Swiss & die Andern',d:'Sa',k:'swiss-die-andern',c:'concert'},
+  {n:'Mia Julia',d:'Sa',k:'mia-julia',c:'concert'},
+  {n:'Raum27',d:'Sa',k:'raum27',c:'concert'},
+  {n:'Nura',d:'Sa',k:'nura',c:'concert'},
+  {n:'257ers',d:'Sa',k:'257ers',c:'concert'},
+  {n:'Annisokay',d:'Sa',k:'annisokay',c:'concert'},
+  {n:'Welshly Arms',d:'Sa',k:'welshly-arms',c:'concert'},
+  {n:'Anna Grey',d:'Sa',k:'anna-grey',c:'concert'},
+  {n:'Anaïs',d:'Sa',k:'anais',c:'concert'},
+  {n:'Noah Kraus',d:'Sa',k:'noah-kraus',c:'concert'},
+  {n:'Bella',d:'Sa',k:'bella',c:'concert'},
+  {n:'King Kong Kicks',d:'Sa',k:'king-kong-kicks',c:'concert'},
+  {n:'Baby B3ns',d:'Sa',k:'baby-b3ns',c:'electronic'},
+  {n:'MandelKokainSchnaps',d:'Sa',k:'mandelkokainschnaps',c:'concert'},
+  {n:'Lina Bó',d:'Sa',k:'lina-bo',c:'concert'},
+  {n:'Ellen Allien',d:'Sa',k:'ellen-allien',c:'electronic'},
+  {n:'Lynno',d:'Sa',k:'lynno',c:'electronic'},
+  {n:'Noel Holler',d:'Sa',k:'noel-holler',c:'electronic'},
+  {n:'Schrotthagen',d:'Sa',k:'schrotthagen',c:'electronic'},
+  {n:'Skkin Velvet',d:'Sa',k:'skkin-velvet',c:'electronic'},
+  {n:'Sido',d:'So',k:'sido',c:'concert'},
+  {n:'01099',d:'So',k:'01099',c:'concert'},
+  {n:'Giant Rooks',d:'So',k:'giant-rooks',c:'concert'},
+  {n:'Ikkimel',d:'So',k:'ikkimel',c:'concert'},
+  {n:'Makko',d:'So',k:'makko',c:'concert'},
+  {n:'102 Boyz',d:'So',k:'102-boyz',c:'concert'},
+  {n:'Majan',d:'So',k:'majan',c:'concert'},
+  {n:'Cascada',d:'So',k:'cascada',c:'concert'},
+  {n:'The Rasmus',d:'So',k:'the-rasmus',c:'concert'},
+  {n:'Jassin',d:'So',k:'jassin',c:'concert'},
+  {n:'OK.Danke.Tschüss',d:'So',k:'okdanketschuess',c:'concert'},
+  {n:'The Molotovs',d:'So',k:'the-molotovs',c:'concert'},
+  {n:'Massendefekt',d:'So',k:'massendefekt',c:'concert'},
+  {n:'Kochkraft durch KMA',d:'So',k:'kochkraft-durch-kma',c:'concert'},
+  {n:'Remote Bondage',d:'So',k:'remote-bondage',c:'concert'},
+  {n:'Grenzkontrolle',d:'So',k:'grenzkontrolle',c:'concert'},
+  {n:'BAC',d:'So',k:'bac',c:'concert'},
+  {n:'Kollektiv Turmstraße',d:'So',k:'kollektiv-turmstrasse',c:'electronic'},
+  {n:'Eskei83',d:'So',k:'eskei83',c:'electronic'},
+  {n:'Christian Löffler',d:'So',k:'christian-loeffler',c:'electronic'},
+  {n:'Moonbootica',d:'So',k:'moonbootica',c:'electronic'},
+  {n:'Schlepp Geist',d:'So',k:'schlepp-geist',c:'electronic'},
+  {n:'Kristin Velvet',d:'So',k:'kristin-velvet',c:'electronic'},
+  {n:'Suzé',d:'So',k:'suze',c:'electronic'},
+  {n:'No.Mads',d:'So',k:'nomads',c:'electronic'},
+];
+
+document.getElementById('total-count').textContent=ACTS.length;
+
+const sel=new Set();
+let curDay='all';
+
+function mkCard(act){
+  const d=document.createElement('div');
+  d.className='card';
+  d.id='c-'+act.n;
+  const img=IMGS[act.k]||'';
+  d.innerHTML=`
+    <div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+    <img class="card-img" src="${img}" alt="${act.n}" loading="lazy" onerror="this.style.background='#3D2E1E'">
+    <div class="card-body">
+      <div class="card-name">${act.n}</div>
+      <div class="card-tag ${act.c}">${act.c==='electronic'?'Electronic':'Konzert'}</div>
+    </div>`;
+  d.addEventListener('click',()=>{
+    if(sel.has(act.n)){sel.delete(act.n);d.classList.remove('selected')}
+    else{sel.add(act.n);d.classList.add('selected')}
+    upd();
+  });
+  return d;
+}
+
+function mkDivider(label){
+  const d=document.createElement('div');
+  d.className='divider';
+  d.innerHTML=`<div class="divider-line"></div><div class="divider-label">${label}</div><div class="divider-line"></div>`;
+  return d;
+}
+
+function render(){
+  const root=document.getElementById('root');
+  root.innerHTML='';
+  const days=curDay==='all'?['Do','Fr','Sa','So']:[curDay];
+  days.forEach(day=>{
+    const acts=ACTS.filter(a=>a.d===day);
+    const concerts=acts.filter(a=>a.c==='concert');
+    const elec=acts.filter(a=>a.c==='electronic');
+    const sec=document.createElement('div');
+    sec.className='day-section';
+    sec.innerHTML=`<div class="day-header"><span class="day-badge ${DAY_INFO[day].c}">${day}</span><span class="day-label">${DAY_INFO[day].l}</span></div>`;
+    if(concerts.length){
+      sec.appendChild(mkDivider('Konzerte'));
+      const g=document.createElement('div');g.className='grid';
+      concerts.forEach(a=>g.appendChild(mkCard(a)));
+      sec.appendChild(g);
+    }
+    if(elec.length){
+      sec.appendChild(mkDivider('Electronic Selection'));
+      const g=document.createElement('div');g.className='grid';
+      elec.forEach(a=>g.appendChild(mkCard(a)));
+      sec.appendChild(g);
+    }
+    root.appendChild(sec);
+  });
+  sel.forEach(name=>{
+    const el=document.getElementById('c-'+name);
+    if(el)el.classList.add('selected');
+  });
+}
+
+function upd(){
+  document.getElementById('sel-count').textContent=sel.size;
+  document.getElementById('exp-badge').textContent=sel.size;
+}
+
+function filterDay(day,btn){
+  curDay=day;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function clearAll(){
+  sel.clear();
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  upd();
+}
+
+function doExport(){
+  const chosen=ACTS.filter(a=>sel.has(a.n));
+  if(!chosen.length){alert('Wähle zuerst mindestens einen Act aus!');return}
+  const cols=4,CARD_W=200,CARD_H=260,GAP=12,PAD=28,HEADER=120,FOOTER=50;
+  const rows=Math.ceil(chosen.length/cols);
+  const W=cols*CARD_W+(cols-1)*GAP+PAD*2;
+  const H=HEADER+rows*(CARD_H+GAP)+FOOTER;
+  const cv=document.getElementById('cv');
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#1A1410';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(232,87,10,0.15)';
+  ctx.beginPath();ctx.arc(W-50,50,130,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';
+  ctx.font='bold 40px Arial Black, Arial';
+  ctx.fillText('DEICHBRAND 2026',PAD,68);
+  ctx.fillStyle='#E8570A';
+  ctx.font='12px Arial';
+  ctx.fillText('MEINE ACTS · 16.–19. JULI · CUXHAVEN/NORDHOLZ',PAD,90);
+  ctx.fillStyle='rgba(255,255,255,0.12)';
+  ctx.fillRect(PAD,105,W-PAD*2,1);
+
+  const promises=chosen.map((act,i)=>{
+    const row=Math.floor(i/cols),col=i%cols;
+    const x=PAD+col*(CARD_W+GAP),y=HEADER+row*(CARD_H+GAP);
+    return new Promise(res=>{
+      const imgH=CARD_H-40;
+      const draw=(imgEl)=>{
+        ctx.save();
+        rr(ctx,x,y,CARD_W,imgH,6);ctx.clip();
+        if(imgEl){ctx.drawImage(imgEl,x,y,CARD_W,imgH)}
+        else{ctx.fillStyle='#3D2E1E';ctx.fillRect(x,y,CARD_W,imgH)}
+        ctx.fillStyle='rgba(0,0,0,0.35)';ctx.fillRect(x,y,CARD_W,imgH);
+        ctx.restore();
+        ctx.fillStyle=act.c==='electronic'?'#E8570A':'rgba(255,255,255,0.6)';
+        ctx.font='9px Arial';ctx.fillText(act.c==='electronic'?'ELECTRONIC':'KONZERT',x+8,y+imgH-32);
+        ctx.fillStyle='#fff';ctx.font='bold 13px Arial';
+        wrapText(ctx,act.n,x+8,y+imgH-18,CARD_W-16,15);
+        ctx.fillStyle='rgba(232,87,10,0.85)';
+        rr(ctx,x,y+imgH,CARD_W,40,0);ctx.fill();
+        ctx.fillStyle='#fff';ctx.font='11px Arial';
+        ctx.fillText(DAY_INFO[act.d].l.split(',')[0],x+10,y+imgH+25);
+        res();
+      };
+      const url=IMGS[act.k];
+      if(!url){draw(null);return}
+      const img=new Image();
+      img.crossOrigin='anonymous';
+      img.onload=()=>draw(img);
+      img.onerror=()=>draw(null);
+      img.src=url;
+    });
+  });
+
+  Promise.all(promises).then(()=>{
+    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='10px Arial';
+    ctx.fillText('deichbrand.de',PAD,H-16);
+    const a=document.createElement('a');
+    a.href=cv.toDataURL('image/png');
+    a.download='deichbrand2026_meine_acts.png';
+    a.click();
+  });
+}
+
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function wrapText(ctx,text,x,y,maxW,lineH){
+  const words=text.split(' ');let line='';
+  for(const w of words){
+    const t=line?line+' '+w:w;
+    if(ctx.measureText(t).width>maxW&&line){ctx.fillText(line,x,y);line=w;y+=lineH}
+    else line=t;
+  }
+  ctx.fillText(line,x,y);
+}
+
+render();
+</script>
