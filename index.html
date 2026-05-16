@@ -366,10 +366,10 @@ function mkCard(act){
   const d=document.createElement('div');
   d.className='card'+(sel.has(act.n)?' selected':'');
   d.id='c-'+act.n;
-  const url=IMGS[act.k]||'';
+  const raw=IMGS[act.k]||''; const url=raw?`https://api.allorigins.win/raw?url=${encodeURIComponent(raw)}`:''; const rawUrl=raw;
   d.innerHTML=`
     <div class="check"><svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
-    <img class="card-img" src="${url}" alt="${act.n}" loading="lazy" onerror="this.style.background='#2A1F14'">
+    <img class="card-img" src="${raw}" alt="${act.n}" loading="lazy" onerror="this.style.background='#2A1F14'">
     <div class="card-body">
       <div class="card-name">${act.n}</div>
       <div class="card-tag ${act.c}">${act.c==='electronic'?'Electronic Selection':'Konzert'}</div>
@@ -501,7 +501,8 @@ function doExport(){
       ctx.fillText(DAY[act.d].l,x+10,y+imgH+23);
       res();
     };
-    const url=IMGS[act.k];
+    const raw2=IMGS[act.k];
+    const url=raw2?`https://api.allorigins.win/raw?url=${encodeURIComponent(raw2)}`:null;
     if(!url){draw(null);return}
     const img=new Image();
     img.crossOrigin='anonymous';
